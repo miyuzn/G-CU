@@ -1,5 +1,5 @@
 // Version 2.0
-
+// New insole1_right
 #include "GCU.h"
 
 
@@ -10,8 +10,8 @@ const uint16_t device_frequency = 100;
 const uint16_t calibration_duration = 10000;
 
 // Sensor Numbers
-constexpr unsigned char sensors_rows_num = 1;
-constexpr unsigned char sensors_columns_num = 10;
+constexpr unsigned char sensors_rows_num = 7;
+constexpr unsigned char sensors_columns_num = 5;
 
 // Data Format Function
 const bool start_flag = GCU_FLAG_ON;
@@ -47,11 +47,14 @@ const bool RTC_chip = GCU_FLAG_OFF;
 // WiFi Parameters
 // #define SSID "GCU-wifi"
 // #define password "12345678"
-const char* host = "esp32s3";
+const char* host = "esp32s3_insole1_right";
 const char* SSID       = "CNLab-IoT";
 const char* password   = "12345678";
+// const char* SSID       = "Xiaomi 14";
+// const char* password   = "cnlab2024";
+// UDP broadcast
 const char* SeverIP = "255.255.255.255";
-const uint16_t port = 1337;
+const uint16_t port = 1370;
 const bool TCP_UDP_Flag = UDP;
 
 
@@ -64,9 +67,9 @@ const int  daylightOffset_sec = 0;
 
 
 // Define ADIO(sensor_rows) and SelectIO(sensor_columns)
-const int analogReadIO[]={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-const int SelectIO[]={18, 19, 20, 21, 35, 36, 37, 39, 40, 41, 42, 45};
-
+const int analogReadIO[]={6, 5, 4, 3, 2, 1, 7};
+// const int SelectIO[]={19, 20, 21, 35, 36};
+const int SelectIO[]={36, 35, 21, 20, 19};
 
 // Data Array Size = (start_flag + sensors_num + end_flag ) * 2 + device_num_flag + sensors_num_flag + timestamp_flag * 6 + IMU_flag * 36
 const unsigned char sensors_num = sensors_rows_num * sensors_columns_num;
@@ -87,6 +90,11 @@ uint32_t check_sum = 0;
 float maxMillVolts[sensors_num];
 float minMillVolts[sensors_num];
 
+float BMI270_BMM150_gyro_x, BMI270_BMM150_gyro_y, BMI270_BMM150_gyro_z;
+float BMI270_BMM150_accel_x, BMI270_BMM150_accel_y, BMI270_BMM150_accel_z;
+float BMI270_BMM150_magn_x, BMI270_BMM150_magn_y, BMI270_BMM150_magn_z;
+sBmx160SensorData_t Omagn, Ogyro, Oaccel;
+
 WebServer server(80);
 Ticker data_receiver;
 WiFiMulti WiFiMulti;
@@ -102,7 +110,7 @@ void setup() {
 
   Serial.begin(115200);
   delay(10);
-  Wire.begin(GCU_SDA,GCU_SCL);
+  Wire.begin(GCU_SDA,GCU_SCL,1000000);
   delay(10);
 
   //init IMU
@@ -113,6 +121,17 @@ void setup() {
       neopixelWrite(GCU_RGB_BRIGHTNESS,GCU_RGB_BRIGHTNESS,GCU_RGB_BRIGHTNESS);
       while (1);
       }
+      Serial.print("Gyroscope sample rate = ");
+      Serial.print(IMU.gyroscopeSampleRate());
+      Serial.println(" Hz");
+      Serial.println();
+      Serial.print("Accelerometer sample rate = ");
+      Serial.print(IMU.accelerationSampleRate());
+      Serial.println(" Hz");
+      Serial.println();
+      Serial.print(IMU.magneticFieldSampleRate());
+      Serial.println(" Hz");
+      Serial.println();
     }
     else{
       if (bmx160.begin() != true){
@@ -217,5 +236,16 @@ void setup() {
 void loop() {
   ArduinoOTA.handle();
   server.handleClient();
+  if (IMU_flag){
+    if (IMU_chip){
+      IMU.readGyroscope(BMI270_BMM150_gyro_x, BMI270_BMM150_gyro_y, BMI270_BMM150_gyro_z);
+      IMU.readAcceleration(BMI270_BMM150_accel_x, BMI270_BMM150_accel_y, BMI270_BMM150_accel_z);
+      IMU.readMagneticField(BMI270_BMM150_magn_x, BMI270_BMM150_magn_y, BMI270_BMM150_magn_z);
+    }
+    else{
+      bmx160.getAllData(&Omagn, &Ogyro, &Oaccel);
+    }
+  } 
+  
 }
 
