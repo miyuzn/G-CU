@@ -16,6 +16,9 @@
 - Add UDP Function
 
 ## Arduino Library
+[esp32](https://github.com/espressif/arduino-esp32) By Espressif Systems **v2.0.17**
+(IMPORTANT: esp32 version **above 3.0** is not compatible with this project) 
+
 [ESP32Time](https://www.arduinolibraries.info/libraries/esp32-time) By fbiego v2.0.6
 
 [Arduino_BMI270_BMM150](https://github.com/arduino-libraries/Arduino_BMI270_BMM150) By Arduino v1.2.0
