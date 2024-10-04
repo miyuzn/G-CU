@@ -149,10 +149,7 @@ void dataReceive(){
   WiFiClient client;
   WiFiUDP udp;
   extern DFRobot_BMX160 bmx160;
-  float BMI270_BMM150_gyro_x, BMI270_BMM150_gyro_y, BMI270_BMM150_gyro_z;
-  float BMI270_BMM150_accel_x, BMI270_BMM150_accel_y, BMI270_BMM150_accel_z;
-  float BMI270_BMM150_magn_x, BMI270_BMM150_magn_y, BMI270_BMM150_magn_z;
-  sBmx160SensorData_t Omagn, Ogyro, Oaccel;
+  
 
   // Use WiFiClient class to create TCP connections
   if(TCP_UDP_Flag){  
@@ -216,23 +213,12 @@ void dataReceive(){
     }
   }
 
+
   if (IMU_flag){
     if (IMU_chip){
-      Serial.print("Gyroscope sample rate = ");
-      Serial.print(IMU.gyroscopeSampleRate());
-      Serial.println(" Hz");
-      Serial.println();
-      Serial.print("Accelerometer sample rate = ");
-      Serial.print(IMU.accelerationSampleRate());
-      Serial.println(" Hz");
-      Serial.println();
-      Serial.print(IMU.magneticFieldSampleRate());
-      Serial.println(" Hz");
-      Serial.println();
+      
 
-      IMU.readGyroscope(BMI270_BMM150_gyro_x, BMI270_BMM150_gyro_y, BMI270_BMM150_gyro_z);
-      IMU.readAcceleration(BMI270_BMM150_accel_x, BMI270_BMM150_accel_y, BMI270_BMM150_accel_z);
-      IMU.readMagneticField(BMI270_BMM150_magn_x, BMI270_BMM150_magn_y, BMI270_BMM150_magn_z);
+      
 
       memcpy(data_p, &BMI270_BMM150_magn_x, sizeof(BMI270_BMM150_magn_x));
       data_p += sizeof(BMI270_BMM150_magn_x);
@@ -259,7 +245,7 @@ void dataReceive(){
 
     }
     else{
-      bmx160.getAllData(&Omagn, &Ogyro, &Oaccel);
+      
 
       memcpy(data_p, &Omagn.x, sizeof(Omagn.x));
       data_p += sizeof(Omagn.x);
@@ -283,6 +269,7 @@ void dataReceive(){
       data_p += sizeof(Oaccel.z);
     }
   }
+  
 
   if(sensors_dataformat == Four_Bytes_Sensors_Data){
     data_p -= sensors_num * 4 + timestamp_flag * 6 + IMU_flag * 36;
@@ -302,23 +289,24 @@ void dataReceive(){
   }
 
 
+/*
   if (IMU_flag){
     if (IMU_chip){
-      /* Display the magnetometer results (magn is magnetometer in uTesla) */
+      // Display the magnetometer results (magn is magnetometer in uTesla)
       Serial.print("M ");
       Serial.print("X: "); Serial.print(BMI270_BMM150_magn_x); Serial.print("  ");
       Serial.print("Y: "); Serial.print(BMI270_BMM150_magn_y); Serial.print("  ");
       Serial.print("Z: "); Serial.print(BMI270_BMM150_magn_z); Serial.print("  ");
       Serial.println("uT");
 
-      /* Display the gyroscope results (gyroscope data is in degrees/second) */
+      // Display the gyroscope results (gyroscope data is in degrees/second)
       Serial.print("G ");
       Serial.print("X: "); Serial.print(BMI270_BMM150_gyro_x); Serial.print("  ");
       Serial.print("Y: "); Serial.print(BMI270_BMM150_gyro_y); Serial.print("  ");
       Serial.print("Z: "); Serial.print(BMI270_BMM150_gyro_z); Serial.print("  ");
       Serial.println("degrees/second");
       
-      /* Display the accelerometer results (accelerometer data is in G's) */
+      // Display the accelerometer results (accelerometer data is in G's)
       Serial.print("A ");
       Serial.print("X: "); Serial.print(BMI270_BMM150_accel_x); Serial.print("  ");
       Serial.print("Y: "); Serial.print(BMI270_BMM150_accel_y); Serial.print("  ");
@@ -328,21 +316,21 @@ void dataReceive(){
       Serial.println("");
     }
     else{
-      /* Display the magnetometer results (magn is magnetometer in uTesla) */
+      // Display the magnetometer results (magn is magnetometer in uTesla)
       Serial.print("M ");
       Serial.print("X: "); Serial.print(Omagn.x); Serial.print("  ");
       Serial.print("Y: "); Serial.print(Omagn.y); Serial.print("  ");
       Serial.print("Z: "); Serial.print(Omagn.z); Serial.print("  ");
       Serial.println("uT");
 
-      /* Display the gyroscope results (gyroscope data is in g) */
+      // Display the gyroscope results (gyroscope data is in g)
       Serial.print("G ");
       Serial.print("X: "); Serial.print(Ogyro.x); Serial.print("  ");
       Serial.print("Y: "); Serial.print(Ogyro.y); Serial.print("  ");
       Serial.print("Z: "); Serial.print(Ogyro.z); Serial.print("  ");
       Serial.println("g");
       
-      /* Display the accelerometer results (accelerometer data is in m/s^2) */
+      // Display the accelerometer results (accelerometer data is in m/s^2)
       Serial.print("A ");
       Serial.print("X: "); Serial.print(Oaccel.x); Serial.print("  ");
       Serial.print("Y: "); Serial.print(Oaccel.y); Serial.print("  ");
@@ -352,7 +340,7 @@ void dataReceive(){
       Serial.println("");
     } 
   }
-
+  */
 
 }
 

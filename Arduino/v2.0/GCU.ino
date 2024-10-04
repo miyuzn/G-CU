@@ -1,5 +1,5 @@
 // Version 2.0
-// New insole1_right
+
 #include "GCU.h"
 
 
@@ -47,14 +47,14 @@ const bool RTC_chip = GCU_FLAG_OFF;
 // WiFi Parameters
 // #define SSID "GCU-wifi"
 // #define password "12345678"
-const char* host = "esp32s3_insole1_right";
+const char* host = "esp32s3_pu_new_insole_l";
 const char* SSID       = "CNLab-IoT";
 const char* password   = "12345678";
-// const char* SSID       = "Xiaomi 14";
-// const char* password   = "cnlab2024";
 // UDP broadcast
 const char* SeverIP = "255.255.255.255";
-const uint16_t port = 1370;
+// pu: left:1370 right:1371 glove_v1:1381
+// test: 1401
+const uint16_t port = 13251;
 const bool TCP_UDP_Flag = UDP;
 
 
@@ -67,18 +67,27 @@ const int  daylightOffset_sec = 0;
 
 
 // Define ADIO(sensor_rows) and SelectIO(sensor_columns)
-const int analogReadIO[]={6, 5, 4, 3, 2, 1, 7};
-// const int SelectIO[]={19, 20, 21, 35, 36};
-const int SelectIO[]={36, 35, 21, 20, 19};
+// new right
+// const int analogReadIO[]={1,2,3,4,5,6,7};
+// const int SelectIO[]={19,20,21,35,36};
+
+// new left
+const int analogReadIO[]={7,6,5,4,3,2,1};
+const int SelectIO[]={42,41,40,39,37};
+
+// // glove
+// const int analogReadIO[]={6, 5, 4, 21, 20, 19, 7};
+// // const int SelectIO[]={19, 20, 21, 35, 36};
+// const int SelectIO[]={1, 2, 3, 36, 35};
 
 // Data Array Size = (start_flag + sensors_num + end_flag ) * 2 + device_num_flag + sensors_num_flag + timestamp_flag * 6 + IMU_flag * 36
 const unsigned char sensors_num = sensors_rows_num * sensors_columns_num;
 
 #if sensors_dataformat_define == Four_Bytes_Sensors_Data
-const unsigned char data_num = (start_flag + end_flag ) * 2 + sensors_num * 4 + device_num_flag + sensors_num_flag + timestamp_flag * 6 + IMU_flag * 4 * 3 * 3;
+const unsigned int data_num = (start_flag + end_flag ) * 2 + sensors_num * 4 + device_num_flag + sensors_num_flag + timestamp_flag * 6 + IMU_flag * 4 * 3 * 3;
 const bool sensors_dataformat = Four_Bytes_Sensors_Data;
 #else
-const unsigned char data_num = (start_flag + sensors_num + end_flag ) * 2 + device_num_flag + sensors_num_flag + timestamp_flag * 6 + IMU_flag * 4 * 3 * 3;
+const unsigned int data_num = (start_flag + sensors_num + end_flag ) * 2 + device_num_flag + sensors_num_flag + timestamp_flag * 6 + IMU_flag * 4 * 3 * 3;
 #endif
 
 
@@ -154,7 +163,8 @@ void setup() {
   Serial.println();
   Serial.print("Waiting for WiFi... ");
   while(WiFiMulti.run() != WL_CONNECTED){
-    Serial.print(".");
+    delay(500);
+    Serial.print("\nConnect to WiFi again...");
   }
   neopixelWrite(0,0,0);
 
@@ -170,17 +180,17 @@ void setup() {
   neopixelWrite(0,GCU_RGB_BRIGHTNESS,GCU_RGB_BRIGHTNESS);
 
   if (RTC_chip){
-    if (!init_RTC_from_net()){
+    while (!init_RTC_from_net()){
       neopixelBlink(0, GCU_RGB_BRIGHTNESS, GCU_RGB_BRIGHTNESS, 3, 1000);
-      if (!init_RTC_from_bq32002()){
-        RTC_error();
-      }
+      // if (!init_RTC_from_bq32002()){
+      //   RTC_error();
+      // }
     }
   }
   else{
-    if (!init_RTC_from_net()){
+    while (!init_RTC_from_net()){
       neopixelBlink(0, GCU_RGB_BRIGHTNESS, GCU_RGB_BRIGHTNESS, 3, 1000);
-      RTC_error();
+      // RTC_error();
     }
   }
   

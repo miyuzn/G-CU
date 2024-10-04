@@ -22,6 +22,7 @@
 #include "Arduino_BMI270_BMM150.h"
 
 
+
 //System Define
 //! DONT NEED CHANGE
 #define GCU_SDA 48
@@ -97,7 +98,7 @@ extern const float normalized_calibration_min_factor;
 extern const bool IMU_chip;
 extern const bool RTC_chip;
 
-extern const unsigned char data_num;
+extern const unsigned int data_num;
 
 //RTC
 extern ESP32Time rtc;
@@ -126,6 +127,11 @@ extern uint32_t check_sum;
 
 extern float maxMillVolts[];
 extern float minMillVolts[];
+
+extern float BMI270_BMM150_gyro_x, BMI270_BMM150_gyro_y, BMI270_BMM150_gyro_z;
+extern float BMI270_BMM150_accel_x, BMI270_BMM150_accel_y, BMI270_BMM150_accel_z;
+extern float BMI270_BMM150_magn_x, BMI270_BMM150_magn_y, BMI270_BMM150_magn_z;
+extern sBmx160SensorData_t Omagn, Ogyro, Oaccel;
 
 
 extern WebServer server;
